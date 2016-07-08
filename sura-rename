@@ -15,7 +15,13 @@ __here__ = os.path.dirname(__file__)
 __SURA_FILE_NAME__ = 'sura_names.json'
 __DATAFILE__ = os.path.abspath(os.path.join(__here__, __SURA_FILE_NAME__))
 
-if __name__ == '__main__':
+def main(args=None):
+    """
+    The main rountine
+    """
+    if args is None:
+        argv = sys.argv
+
     # CLI arguments setup
     parser = argparse.ArgumentParser(description='Rename the Holy Quran Sura\'s in a directory')
     parser.add_argument('directory')
@@ -28,7 +34,7 @@ if __name__ == '__main__':
     parser.add_argument('-a', '--album', metavar='NAME', dest='album',
                         help='The name of the album to use in ID3 tags,'
                         +'if not specified the reciter\'s name is used')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Retreive data
     with open(__DATAFILE__) as sura_names_file:
@@ -50,3 +56,7 @@ if __name__ == '__main__':
     # Rename suras
     rename_in_dir(args.directory, names=sura_names,
                   name_only=args.name_only)
+
+
+if __name__ == "__main__":
+    main()

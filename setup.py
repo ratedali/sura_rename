@@ -3,7 +3,7 @@ setup for quran_rename module
 """
 import codecs
 from os import path
-from setuptools import setup, find_packages
+from setuptools import setup
 
 HERE = path.abspath(path.dirname(__file__))
 
@@ -29,5 +29,6 @@ setup(
     keywords='quran sura',
     packages=['sura_rename'],
     install_requires=['mutagen'],
-    package_data={'names': ['sura_names.json']}
+    package_data={'names': ['sura_names.json']},
+    scripts=["sura-rename"]
     )
