@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+"""
+Renames the files of the Holy Qura'n suras to include thier name and number
+Expects the files to be named in the form %03d.mp3 where d is the order of the suras
+"""
+
+import sys
+import os.path
+import argparse
+import json
+from sura_rename.renamer import rename_in_dir
+from sura_rename.tagger import tag_files
+
+__here__ = os.path.dirname(__file__)
+__SURA_FILE_NAME__ = 'sura_names.json'
+__DATAFILE__ = os.path.abspath(os.path.join(__here__, __SURA_FILE_NAME__))
+
+if __name__ == '__main__':
+    # CLI arguments setup
+    parser = argparse.ArgumentParser(description='Rename the Holy Quran Sura\'s in a directory')
+    parser.add_argument('directory')
+    parser.add_argument('-n', '--name-only', action='store_true', dest='name_only',
+                        help='Do not include the sura index')
+    parser.add_argument('-t', '--tag', action='store_true', dest='tag',
+                        help='Edit the ID3 tags, requires --reciter')
+    parser.add_argument('-r', '--reciter', metavar='NAME', dest='reciter',
+                        help='The name of the reciter to use in the ID3 tags')
+    parser.add_argument('-a', '--album', metavar='NAME', dest='album',
+                        help='The name of the album to use in ID3 tags,'
+                        +'if not specified the reciter\'s name is used')
+    args = parser.parse_args()
+
+    # Retreive data
+    with open(__DATAFILE__) as sura_names_file:
+        sura_names = json.load(sura_names_file)
+
+    # Tag suras first, because the json file aleardy has a dict
+    # that has file names as keys and titles as values
+    # Renaming first would force us to create a new dict
+    if args.tag:
+        if args.reciter is None:
+            sys.exit("reciter's name is not provided")
+        order = {}
+        for sura in sura_names:
+            order[sura] = int(os.path.splitext(os.path.split(sura)[1])[0])
+        tag_files(sura_names, order, reciter=args.reciter, album=args.album)
+
+
+
+    # Rename suras
+    rename_in_dir(args.directory, names=sura_names,
+                  name_only=args.name_only)

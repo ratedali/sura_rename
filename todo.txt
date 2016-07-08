@@ -1,0 +1,4 @@
+~ Add unit tests @testing
++ Add multi-language sura_names support
++ Support name format in input and output @functionality
++ Add genre tagging @functionality
