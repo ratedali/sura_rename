@@ -7,6 +7,7 @@ from os import rename
 
 from .utils import get_mp3_files
 
+
 def rename_in_dir(directory, names, name_only=False):
     """
     Renames all sura files in a given directory

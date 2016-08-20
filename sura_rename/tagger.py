@@ -6,6 +6,7 @@ from os.path import join
 from mutagen.easyid3 import EasyID3
 from mutagen import MutagenError
 
+
 def tag_files(files_to_titles, files_to_numbers, reciter, album=None, directory=curdir):
     """
     tags the files from dictionary with the corresponding
