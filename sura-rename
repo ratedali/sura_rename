@@ -7,6 +7,7 @@ Expects the files to be named in the form %03d.mp3 where d is the order of the s
 import sys
 import os.path
 import argparse
+from textwrap import dedent
 import json
 from sura_rename.renamer import rename_in_dir
 from sura_rename.tagger import tag_files
@@ -22,8 +23,22 @@ def main(args=None):
     if args is None:
         argv = sys.argv
 
+    FORMATS_HELP = dedent(
+                    '''
+                    FORMATS:
+                     Formats are used to specify the format of the sura files' names written
+                    or read by this script. The following placeholders are available:
+
+                    %r      The name of the reciter.
+                    %t      The title of the sura.
+                    %n      The order of the sura in the Holy Quran.
+                    %%      The literal '%'.
+                    ''')
+
     # CLI arguments setup
-    parser = argparse.ArgumentParser(description='Rename the Holy Quran Sura\'s in a directory')
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                    description='Rename the Holy Quran Sura\'s in a directory',
+                                    epilog=FORMATS_HELP)
     parser.add_argument('directory')
     parser.add_argument('-n', '--name-only', action='store_true', dest='name_only',
                         help='Do not include the sura index')
@@ -33,7 +48,15 @@ def main(args=None):
                         help='The name of the reciter to use in the ID3 tags')
     parser.add_argument('-a', '--album', metavar='NAME', dest='album',
                         help='The name of the album to use in ID3 tags,'
-                        +'if not specified the reciter\'s name is used')
+                        'if not specified the reciter\'s name is used')
+    parser.add_argument('-if', '--input-format', metavar='FORMAT',
+                       dest='input_format', default='%n',
+                       help='The format for the input sura files names, default is "%%n".'
+                       'See the FORMATS section for details.')
+    parser.add_argument('-of', '--output-format', metavar='FORMAT',
+                       dest='output_format', default='%n- %t',
+                       help='The format for the output sura files names, default is "%%n- %%t".'
+                       +'See the FORMATS section for details.')
     args = parser.parse_args(argv)
 
     # Retreive data
